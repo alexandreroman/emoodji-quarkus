@@ -1,0 +1,31 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: emoodji-quarkus
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    apps.tanzu.vmware.com/has-tests: "true"
+    app.kubernetes.io/part-of: emoodji-quarkus
+spec:
+  source:
+    git:
+      url: https://github.com/alexandreroman/emoodji-quarkus
+      ref:
+        branch: testing
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "0"
+  build:
+    env:
+    - name: BP_JVM_VERSION
+      value: "17"
+  env:
+  - name: APP_TITLE
+    value: Emoodji Quarkus with PostgreSQL
+  serviceClaims:
+  - name: db
+    ref:
+      apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+      kind: ResourceClaim
+      name: emoodji-db-postgres-claim
